@@ -1,12 +1,12 @@
 const { User } = require('../../models/user');
 
-const { HttpError, ctrlWrapper } = require('../../helpers');
+const { ctrlWrapper } = require('../../helpers');
 
 const logout = async (req, res) => {
     const { _id } = req.user;
     await User.findByIdAndUpdate(_id, { token: "" });
 
-    res.status(204).json({
+    res.json({
         message: "Logout success"
     })
 }
