@@ -33,6 +33,14 @@ const userSchema = new Schema({
         type: String,
         default: ""
     },
+    verify: {
+        type: Boolean,
+        default: false,
+    },
+    verificationToken: {
+        type: String,
+        required: [true, 'Verify token is required'],
+    },
     avatarURL: {
         type: String,
         required: true
@@ -41,7 +49,7 @@ const userSchema = new Schema({
 
 userSchema.post("save", handleMongooseError);
 
-const registerUser = Joi.object({
+const registerUserSchema = Joi.object({
     name: Joi.string().required(),
     email: Joi.string().pattern(emailRegex).required(),
     password: Joi.string().min(6).required(),
@@ -49,9 +57,13 @@ const registerUser = Joi.object({
     // reapedPassword: Joi.ref("password"),
 });
 
-const loginUser = Joi.object({
+const loginUserSchema = Joi.object({
     email: Joi.string().pattern(emailRegex).required(),
     password: Joi.string().min(6).required(),
+});
+
+const verifyUserSchema = Joi.object({
+    email: Joi.string().pattern(emailRegex).required(),
 });
 
 const subscriptionSchema = Joi.object({
@@ -63,9 +75,10 @@ const subscriptionSchema = Joi.object({
 const User = model("user", userSchema);
 
 const schemas = {
-    registerUser,
-    loginUser,
-    subscriptionSchema
+    registerUserSchema,
+    loginUserSchema,
+    subscriptionSchema,
+    verifyUserSchema,
 }
 
 module.exports = {
