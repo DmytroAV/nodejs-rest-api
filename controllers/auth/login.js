@@ -18,7 +18,7 @@ const login = async (req, res) => {
     }
 
     if (!user.verify) {
-        throw HttpError(400, "Email not verify")
+        throw HttpError(400, "Email not verified")
     }
 
     const payload = {
