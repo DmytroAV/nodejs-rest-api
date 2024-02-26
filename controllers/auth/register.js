@@ -21,13 +21,13 @@ const register = async (req, res) => {
 
     const newUser = await User.create({ ...req.body, password: hashPassword, avatarURL, verificationToken });
 
-    const emailVerify = {
+    const verifyEmail = {
         to: email,
         subject: "Verify email",
         html: `<a target="_blank" href="${BASE_URL}/api/users/verify/${verificationToken}" >Click verify email</a>`,
     };
 
-    await sendEmail(emailVerify);
+    await sendEmail(verifyEmail);
 
     res.status(201).json({
         user: {
