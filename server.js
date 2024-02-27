@@ -10,7 +10,7 @@ mongoose.set("strictQuery", false);
 mongoose.connect(DB_HOST)
   .then(() => {
     app.listen(PORT, () => {
-      console.log(`Database connection successful.  Use our API on port: ${PORT}`)
+      console.log("Database connection successful.")
     })
   })
   .catch(error => {
