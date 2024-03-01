@@ -12,19 +12,25 @@ const updateAvatar = async (req, res) => {
     if (!req.file) throw HttpError(400, "missing field avatar");
 
     const { path: tmpUpload, originalname } = req.file;
-    await Jimp.read(tmpUpload).then((img) =>
-        img.resize(250, 250).write(`${tmpUpload}`));
-
     const filename = `${_id}_${originalname}`;
-    const resultUpload = path.join(avatarDir, filename);
-    await fs.rename(tmpUpload, resultUpload);
 
-    const avatarURL = path.join("avatars", filename);
-    await User.findByIdAndUpdate(_id, { avatarURL });
+    try {
+        const resultUpload = path.join(avatarDir, filename);
 
-    if (!avatarURL) throw HttpError(404, "Not found");
+        const originalAvatar = await Jimp.read(tmpUpload);
+        originalAvatar.resize(250, 250).write(resultUpload);
+        await fs.unlink(tmpUpload);
 
-    res.json({ avatarURL });
+        const avatarURL = path.join("avatars", filename);
+        await User.findByIdAndUpdate(_id, { avatarURL });
+
+        if (!avatarURL) throw HttpError(404, "Not found");
+
+        res.status(200).json({ avatarURL });
+    } catch (error) {
+        await fs.unlink(tmpUpload);
+        throw error;
+    }
 
 };
 
